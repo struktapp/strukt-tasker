@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$autoloaders = [
+    dirname(__DIR__) . '/vendor/autoload.php',
+    dirname(__DIR__, 3) . '/autoload.php',
+    (getcwd() ?: '.') . '/vendor/autoload.php',
+];
+
+foreach ($autoloaders as $autoload) {
+    if (is_file($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+if (!class_exists(\Strukt\Tasker::class)) {
+    fwrite(STDERR, "Tasker could not load Composer's autoloader.\n");
+    exit(1);
+}
+
+$application = new \Strukt\Tasker();
+exit($application->run($_SERVER['argv'] ?? []));
