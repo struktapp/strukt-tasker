@@ -8,6 +8,8 @@ Strukt Tasker is a small PHP task runner for project-local commands. It loads
 and provides helpers for composing tasks, watching files, and running external
 commands.
 
+<center><img src="tasker.jpg" width="200" height="200"></center>
+
 This is the Strukt 3 rewrite of `strukt1/strukt-tasker`. It keeps the simple
 task-file workflow while adding PHP 8.2 types, deterministic registration,
 testable application and watcher classes, useful exit codes, complete stream
@@ -194,16 +196,20 @@ closed.
 The tuple preserves the Strukt 1 task-file API. Use `CommandRunner` directly
 when the process exit code is important.
 
-The `event()` and `cmd()` helpers are supplied by the `strukt/event`
-dependency. They are available in the same task file after Composer loads the
-package.
+The `strukt/event` dependency is load-bearing: every `Strukt\Task` wraps a
+`Strukt\Event` (see the Task API below). Its `event()` and `cmd()` helpers are
+also available in the same task file after Composer loads the package.
 
 Task API
 --------
 
 ### `Strukt\Task`
 
-`Task` stores a callable as a `Closure` and retains its reflection metadata.
+`Task` composes `Strukt\Event`. It owns the task name, description, and
+parameter metadata, while the wrapped event retains the callable as a `Closure`,
+exposes its `ReflectionFunction`, and applies arguments during execution. This
+keeps Task a thin descriptor over the event package instead of reimplementing
+callable handling.
 
 ```php
 new Task(string $name, callable $callback, ?string $description = null)
@@ -336,7 +342,8 @@ and error tuple used by the global `run()` helper.
 Performance and safety
 ----------------------
 
-- Task callbacks are converted to closures and reflected once at registration.
+- Task callbacks are converted to closures and reflected once by `Strukt\Event`
+  at registration.
 - Task lookup uses an ordered associative map, so execution does not scan the
   complete task list.
 - External command output and error streams are drained concurrently through
@@ -362,6 +369,12 @@ composer validate --no-check-publish
 The package tests cover task registration and argument validation, default-file
 creation, nested tasks, CLI status codes, command output/error/input handling,
 and deterministic file watching.
+
+Changelog
+---------
+
+Every change to this package is recorded in
+[`docs/changelog/`](docs/changelog/README.md), newest first.
 
 License
 -------

@@ -11,6 +11,8 @@ it('registers tasks once and executes validated arguments', function (): void {
 
     expect($task->name())->toBe('greet')
         ->and($task->description())->toBe('Say hello.')
+        ->and($task->callback())->toBeInstanceOf(Closure::class)
+        ->and($task->reflection())->toBeInstanceOf(ReflectionFunction::class)
         ->and($task->parameters()[0]['name'])->toBe('name')
         ->and($registry->run('greet', ['Ada']))->toBe('Hello Ada!');
 

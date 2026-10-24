@@ -3,17 +3,20 @@ namespace Strukt;
 
 use Closure;
 
-/** Describes one named task and invokes it with validated arguments. */
+/**
+ * Describes one named task and invokes it with validated arguments.
+ *
+ * The callable is owned by the event package: a Task wraps a Strukt\Event,
+ * which performs the closure conversion, retains the reflection metadata, and
+ * applies the invocation arguments.
+ */
 final class Task
 {
     /** Task name shown on the command line. */
     private string $name;
 
-    /** Callable retained as a closure for direct invocation. */
-    private Closure $callback;
-
-    /** Reflection retained to avoid rebuilding task metadata per invocation. */
-    private \ReflectionFunction $reflection;
+    /** Deferred task callback owned by the event package. */
+    private Event $event;
 
     /** Optional explicit description, primarily used by built-in tasks. */
     private ?string $explicitDescription;
@@ -34,8 +37,7 @@ final class Task
         }
 
         $this->name                = $name;
-        $this->callback            = $callback instanceof Closure ? $callback : Closure::fromCallable($callback);
-        $this->reflection          = new \ReflectionFunction($this->callback);
+        $this->event               = new Event($callback);
         $this->explicitDescription = $description === null ? null : trim($description);
     }
 
@@ -56,7 +58,7 @@ final class Task
      */
     public function callback(): Closure
     {
-        return $this->callback;
+        return $this->event->ref()->getClosure();
     }
 
     /**
@@ -66,7 +68,7 @@ final class Task
      */
     public function reflection(): \ReflectionFunction
     {
-        return $this->reflection;
+        return $this->event->ref();
     }
 
     /**
@@ -80,7 +82,7 @@ final class Task
             return $this->explicitDescription;
         }
 
-        $doc = $this->reflection->getDocComment();
+        $doc = $this->event->ref()->getDocComment();
         if ($doc === false) {
             return '';
         }
@@ -109,7 +111,7 @@ final class Task
     public function parameters(): array
     {
         $parameters = [];
-        foreach ($this->reflection->getParameters() as $parameter) {
+        foreach ($this->event->ref()->getParameters() as $parameter) {
             $type         = $parameter->getType();
             $parameters[] = [
                 'name'     => $parameter->getName(),
@@ -125,6 +127,9 @@ final class Task
     /**
      * Invokes the task with positional or named arguments.
      *
+     * Positional argument counts are validated against the callback signature,
+     * then the event package applies the arguments and executes the callback.
+     *
      * @param array<int|string, mixed> $arguments Arguments to pass to the task.
      * @return mixed Task result.
      * @throws \InvalidArgumentException When positional argument count is invalid.
@@ -132,9 +137,10 @@ final class Task
     public function invoke(array $arguments = []): mixed
     {
         if (array_is_list($arguments)) {
-            $parameters = $this->reflection->getParameters();
-            $required   = $this->reflection->getNumberOfRequiredParameters();
-            $maximum    = $this->reflection->isVariadic()
+            $reflection = $this->event->ref();
+            $parameters = $reflection->getParameters();
+            $required   = $reflection->getNumberOfRequiredParameters();
+            $maximum    = $reflection->isVariadic()
                 ? null
                 : count($parameters);
 
@@ -157,7 +163,7 @@ final class Task
             }
         }
 
-        return ($this->callback)(...$arguments);
+        return $this->event->applyArgs($arguments)->exec();
     }
 
     /**

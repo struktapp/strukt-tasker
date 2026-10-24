@@ -28,30 +28,52 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../base",
+            "url": "../../strukt4/base",
             "options": {
-                "symlink": false
+                "symlink": false,
+                "versions": {
+                    "strukt/base": "dev-main"
+                }
             }
         },
         {
             "type": "path",
-            "url": "../event",
+            "url": "../../strukt4/event",
             "options": {
-                "symlink": false
+                "symlink": false,
+                "versions": {
+                    "strukt/event": "dev-main"
+                }
             }
         },
         {
             "type": "path",
-            "url": "../fs",
+            "url": "../../strukt4/fs",
             "options": {
-                "symlink": false
+                "symlink": false,
+                "versions": {
+                    "strukt/fs": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../process",
             "options": {
-                "symlink": false
+                "symlink": false,
+                "versions": {
+                    "strukt/process": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/console",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/console": "dev-main"
+                }
             }
         }
     ],
