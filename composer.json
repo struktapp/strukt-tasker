@@ -5,9 +5,9 @@
     "license": "MIT",
     "require": {
         "php": ">=8.2",
-        "strukt/event": "dev-main",
-        "strukt/fs": "dev-main",
-        "strukt/process": "dev-main"
+        "strukt/event": "v1.0.1",
+        "strukt/fs": "v2.0.0",
+        "strukt/process": "v1.0.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0"
@@ -25,58 +25,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../strukt4/base",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/base": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/event",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/event": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/fs",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/fs": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../process",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/process": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/console",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/console": "dev-main"
-                }
-            }
-        }
-    ],
     "scripts": {
         "test": "pest"
     },
@@ -96,5 +44,6 @@
             "name": "pitsolu",
             "email": "pitsolu@gmail.com"
         }
-    ]
+    ],
+    "version": "1.0.0"
 }
