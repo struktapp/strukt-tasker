@@ -5,9 +5,9 @@
     "license": "MIT",
     "require": {
         "php": ">=8.2",
-        "strukt/event": "v1.0.1",
+        "strukt/event": "v1.2.0",
         "strukt/fs": "v2.0.0",
-        "strukt/process": "v1.0.0"
+        "strukt/process": "v2.0.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0"
